@@ -47,7 +47,7 @@ sys.path.insert(0, REF_DIR)
 sys.path.insert(0, JR_TOOLS_DIR)
 
 try:
-    from mcp.server.fastmcp import FastMCP
+    from mcp.server.mcpserver import MCPServer as FastMCP
 except ImportError:
     print("Missing 'mcp' package. Install it with:", file=sys.stderr)
     print("  pip install -r requirements.txt", file=sys.stderr)
@@ -70,12 +70,8 @@ from mcp.server.transport_security import TransportSecuritySettings
 ALLOWED_BDS_ORIGIN = "moz-extension://12acc078-b84b-4db7-bb5d-ca3aab7eaf30"
 
 mcp = FastMCP(
-    "pcjr-tools",
-    transport_security=TransportSecuritySettings(
-        allowed_origins=[ALLOWED_BDS_ORIGIN],
-        allowed_hosts=["127.0.0.1:8765", "localhost:8765"],
-    ),
-)
+        "pcjr-tools",
+        )
 
 try:
     MANSTORE = MANUAL.ManualStore(MANUAL_FILE, PAGES_JSONL)
@@ -97,16 +93,16 @@ except Exception as exc:
 
 @mcp.tool()
 def search_ref(
-    mode: str,
-    query: Optional[str] = None,
-    context: int = 3,
-    max_pages: int = 1,
-    start: Optional[int] = None,
-    end: Optional[int] = None,
-    max_matches: int = 50,
-    raw: bool = False,
-    verbose: Optional[bool] = None,
-) -> str:
+        mode: str,
+        query: Optional[str] = None,
+        context: int = 3,
+        max_pages: int = 1,
+        start: Optional[int] = None,
+        end: Optional[int] = None,
+        max_matches: int = 50,
+        raw: bool = False,
+        verbose: Optional[bool] = None,
+        ) -> str:
     """Search the IBM PCjr Technical Reference strip (prose; Appendix A excluded).
 
     mode:
@@ -126,19 +122,19 @@ def search_ref(
             if not query:
                 return json.dumps({"error": "mode=query requires 'query'"})
             return json.dumps(
-                MANSTORE.query(query, int(context), int(max_pages), raw), indent=2
-            )
+                    MANSTORE.query(query, int(context), int(max_pages), raw), indent=2
+                    )
         if mode == "grep":
             if not query:
                 return json.dumps({"error": "mode=grep requires 'query'"})
             return json.dumps(
-                MANSTORE.grep(query, int(context), int(max_matches), raw), indent=2
-            )
+                    MANSTORE.grep(query, int(context), int(max_matches), raw), indent=2
+                    )
         if mode == "peek":
             if start is None or start < 1:
                 return json.dumps(
-                    {"error": "mode=peek requires 'start' >= 1 (1-based page index)"}
-                )
+                        {"error": "mode=peek requires 'start' >= 1 (1-based page index)"}
+                        )
             return json.dumps(MANSTORE.peek(start, end), indent=2)
         if mode == "stats":
             return json.dumps(MANSTORE.stats(bool(verbose)), indent=2)
@@ -150,15 +146,15 @@ def search_ref(
 
 @mcp.tool()
 def grep_repo(
-    mode: str,
-    query: Optional[str] = None,
-    context: int = 2,
-    literal: bool = False,
-    path: Optional[str] = None,
-    start_line: Optional[int] = None,
-    end_line: Optional[int] = None,
-    max_matches: int = 50,
-) -> str:
+        mode: str,
+        query: Optional[str] = None,
+        context: int = 2,
+        literal: bool = False,
+        path: Optional[str] = None,
+        start_line: Optional[int] = None,
+        end_line: Optional[int] = None,
+        max_matches: int = 50,
+        ) -> str:
     """Read-only repo tool over the PyCJr repo.
 
     mode:
@@ -177,18 +173,18 @@ def grep_repo(
     """
     try:
         return json.dumps(
-            GREP.dispatch(
-                mode=mode,
-                query=query,
-                context=context,
-                literal=literal,
-                path=path,
-                start_line=start_line,
-                end_line=end_line,
-                max_matches=max_matches,
-            ),
-            indent=2,
-        )
+                GREP.dispatch(
+                    mode=mode,
+                    query=query,
+                    context=context,
+                    literal=literal,
+                    path=path,
+                    start_line=start_line,
+                    end_line=end_line,
+                    max_matches=max_matches,
+                    ),
+                indent=2,
+                )
     except Exception as exc:
         return json.dumps({"error": str(exc)})
 
@@ -196,14 +192,14 @@ def grep_repo(
 
 @mcp.tool()
 def bios_grep(
-    mode: str,
-    query: Optional[str] = None,
-    context: int = 3,
-    start: Optional[int] = None,
-    end: Optional[int] = None,
-    max_matches: int = 50,
-    raw: bool = False,
-) -> str:
+        mode: str,
+        query: Optional[str] = None,
+        context: int = 3,
+        start: Optional[int] = None,
+        end: Optional[int] = None,
+        max_matches: int = 50,
+        raw: bool = False,
+        ) -> str:
     """Grep the flat BIOS listing (refs/ibm_pcjr-bios.lst).
 
     mode:
@@ -222,13 +218,13 @@ def bios_grep(
             if not query:
                 return json.dumps({"error": "mode=grep requires 'query'"})
             return json.dumps(
-                BIOSSTORE.grep(query, int(context), int(max_matches), raw), indent=2
-            )
+                    BIOSSTORE.grep(query, int(context), int(max_matches), raw), indent=2
+                    )
         if mode == "peek":
             if start is None or start < 1:
                 return json.dumps(
-                    {"error": "mode=peek requires 'start' >= 1 (1-based line number)"}
-                )
+                        {"error": "mode=peek requires 'start' >= 1 (1-based line number)"}
+                        )
             return json.dumps(BIOSSTORE.peek(start, end), indent=2)
         if mode == "stats":
             return json.dumps(BIOSSTORE.stats(), indent=2)
@@ -240,27 +236,27 @@ def bios_grep(
 
 @mcp.tool()
 def jr(
-    command: str,
-    # file inputs (legacy)
-    src: Optional[str] = None,
-    binfile: Optional[str] = None,
-    bas: Optional[str] = None,
-    bin: Optional[str] = None,
-    out: Optional[str] = None,
-    # inline inputs (new)
-    asm_text: Optional[str] = None,
-    bin_hex: Optional[str] = None,
-    bas_text: Optional[str] = None,
-    stage: Optional[int] = None,
-    result: Optional[int] = None,
-    ceiling: Optional[int] = None,
-    shape: Optional[str] = None,
-    only: Optional[list[str]] = None,
-    skip: Optional[list[str]] = None,
-    strict: bool = False,
-    uasm: Optional[str] = None,
-    keep: bool = False,
-) -> str:
+        command: str,
+        # file inputs (legacy)
+        src: Optional[str] = None,
+        binfile: Optional[str] = None,
+        bas: Optional[str] = None,
+        bin: Optional[str] = None,
+        out: Optional[str] = None,
+        # inline inputs (new)
+        asm_text: Optional[str] = None,
+        bin_hex: Optional[str] = None,
+        bas_text: Optional[str] = None,
+        stage: Optional[int] = None,
+        result: Optional[int] = None,
+        ceiling: Optional[int] = None,
+        shape: Optional[str] = None,
+        only: Optional[list[str]] = None,
+        skip: Optional[list[str]] = None,
+        strict: bool = False,
+        uasm: Optional[str] = None,
+        keep: bool = False,
+        ) -> str:
     """PCjr bridge byte pipeline with inline or file inputs.
 
     Prefer inline inputs (asm_text, bin_hex, bas_text) for development;
@@ -275,16 +271,16 @@ def jr(
                 with open(src, 'r') as f:
                     asm_text = f.read()
             res = JR.build(
-                asm_text,
-                stage=stage if stage is not None else 6,
-                result=result,
-                ceiling=ceiling if ceiling is not None else 180,
-                shape=shape or "bridge",
-                only=only,
-                skip=skip,
-                strict=strict,
-                uasm=uasm or "uasm",
-            )
+                    asm_text,
+                    stage=stage if stage is not None else 6,
+                    result=result,
+                    ceiling=ceiling if ceiling is not None else 180,
+                    shape=shape or "bridge",
+                    only=only,
+                    skip=skip,
+                    strict=strict,
+                    uasm=uasm or "uasm",
+                    )
             # Return artifacts inline; optionally write if src given.
             if src:
                 base = os.path.splitext(src)[0]
@@ -303,15 +299,15 @@ def jr(
                 with open(binfile, 'rb') as f:
                     bin_hex = f.read().hex().upper()
             res = JR.lint(
-                bin_hex,
-                stage=stage if stage is not None else 6,
-                result=result,
-                ceiling=ceiling if ceiling is not None else 180,
-                shape=shape or "bridge",
-                only=only,
-                skip=skip,
-                strict=strict,
-            )
+                    bin_hex,
+                    stage=stage if stage is not None else 6,
+                    result=result,
+                    ceiling=ceiling if ceiling is not None else 180,
+                    shape=shape or "bridge",
+                    only=only,
+                    skip=skip,
+                    strict=strict,
+                    )
             return json.dumps(res, indent=2)
 
         elif command == "verify":
@@ -394,10 +390,15 @@ def main() -> None:
     import uvicorn
 
     try:
-        app = mcp.streamable_http_app()
+        app = mcp.streamable_http_app(                transport_security=TransportSecuritySettings(
+                    allowed_origins=[ALLOWED_BDS_ORIGIN],
+                    allowed_hosts=["127.0.0.1:8765", "localhost:8765"],
+
+                    )
+                                      )
         print("transport: streamable-http (/mcp)")
     except AttributeError:
-        app = mcp.sse_app()
+        app = mcp.sse_app() 
         print("transport: sse fallback (may not work with BDS)")
 
     uvicorn.run(app, host=HOST, port=PORT_REF)
