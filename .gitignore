@@ -1,0 +1,25 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+*.toml
+*.lock
+
+*.zip
+*.lst
+*.o
+*.vim
+*.bin
+*.pdf
+
+ibm_pcjr-bios.lst
+language_model.json
+pages.jsonl
+pcjr_technical_reference.txt
+tech_ref_pages.txt
