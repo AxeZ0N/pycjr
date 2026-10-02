@@ -319,6 +319,8 @@ class PCjrEmulator(PCjrIRSender):
     def __init__(self, chars_per_sec=60):
         super().__init__()
         self.char_interval_s = 1.0 / max(1, chars_per_sec)
+        if chars_per_sec == -1:
+            self.char_interval_s = 0.01
         self._last_char_time = 0.0
 
     def send_char(self, ch):

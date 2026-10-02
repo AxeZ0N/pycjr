@@ -104,7 +104,7 @@ class QueueWorker(threading.Thread):
         self.status_signal.emit("[OOB] Aborting queue and sending --cc...")
         self.abort()
         if self.ssh_target:
-            cmd = ["ssh", self.ssh_target, "python3 /home/k/pcjr-cassio-lab/pycjr.py --cc"]
+            cmd = ["ssh", self.ssh_target, "python3 /home/k/pycjr/pycjr.py --cc"]
             try:
                 subprocess.Popen(cmd, start_new_session=True)
             except Exception as e:
@@ -115,7 +115,7 @@ class QueueWorker(threading.Thread):
         self.status_signal.emit("[OOB] Aborting queue and sending --reset...")
         self.abort()
         if self.ssh_target:
-            cmd = ["ssh", self.ssh_target, "python3 /home/k/pcjr-cassio-lab/pycjr.py --reset"]
+            cmd = ["ssh", self.ssh_target, "python3 /home/k/pycjr/pycjr.py --reset"]
             try:
                 subprocess.Popen(cmd, start_new_session=True)
             except Exception as e:
@@ -128,7 +128,7 @@ class QueueWorker(threading.Thread):
             )
             return
 
-        remote_cmd = "python3 -u /home/k/pcjr-cassio-lab/pycjr.py --cps -1 --stdin"
+        remote_cmd = "python3 -u /home/k/pycjr/pycjr.py --cps -1 --stdin"
         cmd = ["ssh", "-t", "-t", self.ssh_target, remote_cmd]
 
         try:
