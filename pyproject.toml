@@ -8,4 +8,5 @@ dependencies = [
     "fastmcp>=4.0.3",
     "mcp>=2.2.0",
     "pigpio>=1.78",
+    "pyqt6>=6.11.0",
 ]
